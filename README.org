@@ -1,0 +1,24 @@
+#+TITLE: Terminal Cursor Mode
+
+Emacs minor mode that changes cursor appearance in terminal based on cursor-type.
+
+* Installation
+
+#+BEGIN_SRC elisp
+(load-file "terminal-cursor-mode.el")
+(terminal-cursor-mode 1)
+#+END_SRC
+
+* Usage
+
+Change cursor type:
+#+BEGIN_SRC elisp
+(setq cursor-type 'bar)   ; Bar cursor
+(setq cursor-type 'box)   ; Block cursor  
+(setq cursor-type 'hbar)  ; Underline cursor
+#+END_SRC
+
+* Requirements
+
+- Emacs running in terminal (emacs -nw)
+- Terminal supporting ANSI escape sequences

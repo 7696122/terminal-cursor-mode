@@ -1,0 +1,3 @@
+#+title: Scratch
+
+emacs mode를 만들고 싶어 emacs -nw 상에서 cursor-type에 따라 cursor를 변경하는 mode야

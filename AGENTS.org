@@ -1,0 +1,15 @@
+#+TITLE: AGENTS
+
+* Terminal Cursor Mode Agent
+
+** Description
+Emacs minor mode that changes cursor appearance in terminal based on cursor-type.
+
+** Files
+- terminal-cursor-mode.el
+
+** Usage
+#+BEGIN_SRC elisp
+(load-file "terminal-cursor-mode.el")
+(terminal-cursor-mode 1)
+#+END_SRC

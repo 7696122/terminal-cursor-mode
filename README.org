@@ -1,21 +1,44 @@
 #+TITLE: Terminal Cursor Mode
 
-Emacs minor mode that changes cursor appearance in terminal based on cursor-type.
+Emacs minor mode that changes cursor appearance in terminal based on cursor-type, with performance optimization and error handling.
+
+* Features
+
+- Changes cursor shape (box, bar, hbar) based on cursor-type
+- Controls cursor blinking with blink-cursor-mode
+- Sets cursor color from cursor face
+- Performance optimized (updates only when state changes)
+- Error handling for unsupported terminals
+- Global mode for all buffers
 
 * Installation
 
 #+BEGIN_SRC elisp
 (load-file "terminal-cursor-mode.el")
-(terminal-cursor-mode 1)
+(global-terminal-cursor-mode 1)  ; Enable for all buffers
 #+END_SRC
 
 * Usage
 
-Change cursor type:
+** Global Mode (Recommended)
 #+BEGIN_SRC elisp
-(setq cursor-type 'bar)   ; Bar cursor
-(setq cursor-type 'box)   ; Block cursor  
-(setq cursor-type 'hbar)  ; Underline cursor
+(global-terminal-cursor-mode 1)   ; Enable for all buffers
+(global-terminal-cursor-mode 0)   ; Disable
+#+END_SRC
+
+** Per-Buffer Mode
+#+BEGIN_SRC elisp
+(terminal-cursor-mode 1)          ; Enable for current buffer
+(terminal-cursor-mode 0)          ; Disable
+#+END_SRC
+
+** Change Cursor Settings
+#+BEGIN_SRC elisp
+(setq cursor-type 'bar)                              ; Bar cursor
+(setq cursor-type 'box)                              ; Block cursor  
+(setq cursor-type 'hbar)                             ; Underline cursor
+(blink-cursor-mode 1)                                ; Enable blinking
+(set-face-attribute 'cursor nil :background "red")   ; Set color
 #+END_SRC
 
 * Requirements

@@ -3,13 +3,23 @@
 * Terminal Cursor Mode Agent
 
 ** Description
-Emacs minor mode that changes cursor appearance in terminal based on cursor-type.
+Emacs minor mode that changes cursor appearance in terminal based on cursor-type, blink-cursor-mode, and cursor face. Features performance optimization, error handling, and global mode support.
+
+** Features
+- Cursor shape control (box, bar, hbar)
+- Blink control with blink-cursor-mode
+- Color control from cursor face
+- Performance optimized updates
+- Error handling for unsupported terminals
+- Global mode for all buffers
 
 ** Files
 - terminal-cursor-mode.el
+- terminal-cursor-mode-pkg.el
+- terminal-cursor-mode-recipe.el
 
 ** Usage
 #+BEGIN_SRC elisp
 (load-file "terminal-cursor-mode.el")
-(terminal-cursor-mode 1)
+(global-terminal-cursor-mode 1)
 #+END_SRC

@@ -27,9 +27,11 @@
 
 ;; This package provides a minor mode that changes the terminal cursor
 ;; appearance based on Emacs cursor-type, blink-cursor-mode, and cursor face.
+;; Includes performance optimization and error handling.
 ;; 
 ;; Usage:
-;;   (terminal-cursor-mode 1)
+;;   (global-terminal-cursor-mode 1)  ; Enable for all buffers
+;;   (terminal-cursor-mode 1)         ; Enable for current buffer only
 
 ;;; Code:
 
@@ -79,10 +81,15 @@
       (terminal-cursor-mode-enable)
     (terminal-cursor-mode-disable)))
 
+(defun terminal-cursor-mode-turn-on ()
+  "Turn on terminal-cursor-mode if appropriate."
+  (unless (minibufferp)
+    (terminal-cursor-mode 1)))
+
 ;;;###autoload
 (define-globalized-minor-mode global-terminal-cursor-mode
   terminal-cursor-mode
-  (lambda () (terminal-cursor-mode 1))
+  terminal-cursor-mode-turn-on
   :group 'terminal-cursor)
 
 (provide 'terminal-cursor-mode)

@@ -6,14 +6,14 @@
   "Keymap for terminal-cursor-mode.")
 
 (defun terminal-cursor-update ()
-  "Update terminal cursor based on cursor-type."
+  "Update terminal cursor based on cursor-type and blink-cursor-mode."
   (when (not (display-graphic-p))
     (let ((cursor-escape
            (pcase cursor-type
-             ('box "\e[2 q")      ; Block cursor
-             ('bar "\e[6 q")      ; Bar cursor
-             ('hbar "\e[4 q")     ; Underline cursor
-             (_ "\e[2 q"))))      ; Default to block
+             ('box (if blink-cursor-mode "\e[1 q" "\e[2 q"))      ; Blinking/steady block
+             ('bar (if blink-cursor-mode "\e[5 q" "\e[6 q"))      ; Blinking/steady bar
+             ('hbar (if blink-cursor-mode "\e[3 q" "\e[4 q"))     ; Blinking/steady underline
+             (_ (if blink-cursor-mode "\e[1 q" "\e[2 q")))))      ; Default
       (send-string-to-terminal cursor-escape))))
 
 (defun terminal-cursor-mode-enable ()

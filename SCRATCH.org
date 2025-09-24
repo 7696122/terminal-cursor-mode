@@ -1,3 +1,18 @@
 #+title: Scratch
 
 emacs mode를 만들고 싶어 emacs -nw 상에서 cursor-type에 따라 cursor를 변경하는 mode야
+
+AGENTS.org 파일 만들어줘
+
+README.org 파일 만들어줘
+
+blink-cursor-mode에 따라 커서 블링크 변경하게 해줘
+
+cursor face에 따라 커서 변경되게 해줘
+
+#+begin_src elisp
+;; 커서 색상 변경
+(set-face-attribute 'cursor nil :background "red")
+(set-face-attribute 'cursor nil :background "#00ff00")
+(set-face-attribute 'cursor nil :background "blue")
+#+end_src

@@ -36,29 +36,39 @@
 (defvar terminal-cursor-mode-map (make-sparse-keymap)
   "Keymap for terminal-cursor-mode.")
 
+(defvar terminal-cursor--last-state nil
+  "Last cursor state to avoid unnecessary updates.")
+
 (defun terminal-cursor-update ()
   "Update terminal cursor based on cursor-type, blink-cursor-mode, and cursor face."
   (when (not (display-graphic-p))
-    (let* ((cursor-escape
-            (pcase cursor-type
-              ('box (if blink-cursor-mode "\e[1 q" "\e[2 q"))      ; Blinking/steady block
-              ('bar (if blink-cursor-mode "\e[5 q" "\e[6 q"))      ; Blinking/steady bar
-              ('hbar (if blink-cursor-mode "\e[3 q" "\e[4 q"))     ; Blinking/steady underline
-              (_ (if blink-cursor-mode "\e[1 q" "\e[2 q"))))       ; Default
-           (cursor-color (face-attribute 'cursor :background nil 'default))
-           (color-escape (when (and cursor-color (not (eq cursor-color 'unspecified)))
-                          (format "\e]12;%s\007" cursor-color))))
-      (send-string-to-terminal cursor-escape)
-      (when color-escape
-        (send-string-to-terminal color-escape)))))
+    (let* ((cursor-color (face-attribute 'cursor :background nil 'default))
+           (current-state (list cursor-type blink-cursor-mode cursor-color)))
+      (unless (equal current-state terminal-cursor--last-state)
+        (setq terminal-cursor--last-state current-state)
+        (condition-case nil
+            (let* ((cursor-escape
+                    (pcase cursor-type
+                      ('box (if blink-cursor-mode "\e[1 q" "\e[2 q"))
+                      ('bar (if blink-cursor-mode "\e[5 q" "\e[6 q"))
+                      ('hbar (if blink-cursor-mode "\e[3 q" "\e[4 q"))
+                      (_ (if blink-cursor-mode "\e[1 q" "\e[2 q"))))
+                   (color-escape (when (and cursor-color (not (eq cursor-color 'unspecified)))
+                                  (format "\e]12;%s\007" cursor-color))))
+              (send-string-to-terminal cursor-escape)
+              (when color-escape
+                (send-string-to-terminal color-escape)))
+          (error nil))))))
 
 (defun terminal-cursor-mode-enable ()
   "Enable terminal cursor mode."
-  (add-hook 'post-command-hook #'terminal-cursor-update nil t))
+  (add-hook 'post-command-hook #'terminal-cursor-update nil t)
+  (terminal-cursor-update))
 
 (defun terminal-cursor-mode-disable ()
   "Disable terminal cursor mode."
-  (remove-hook 'post-command-hook #'terminal-cursor-update t))
+  (remove-hook 'post-command-hook #'terminal-cursor-update t)
+  (setq terminal-cursor--last-state nil))
 
 ;;;###autoload
 (define-minor-mode terminal-cursor-mode
@@ -68,6 +78,12 @@
   (if terminal-cursor-mode
       (terminal-cursor-mode-enable)
     (terminal-cursor-mode-disable)))
+
+;;;###autoload
+(define-globalized-minor-mode global-terminal-cursor-mode
+  terminal-cursor-mode
+  (lambda () (terminal-cursor-mode 1))
+  :group 'terminal-cursor)
 
 (provide 'terminal-cursor-mode)
 ;;; terminal-cursor-mode.el ends here

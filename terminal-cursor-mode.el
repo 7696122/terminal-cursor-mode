@@ -38,7 +38,7 @@
 (defvar terminal-cursor-mode-map (make-sparse-keymap)
   "Keymap for terminal-cursor-mode.")
 
-(defvar terminal-cursor--last-state nil
+(defvar-local terminal-cursor--last-state nil
   "Last cursor state to avoid unnecessary updates.")
 
 (defun terminal-cursor-update ()

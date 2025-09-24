@@ -27,7 +27,7 @@
 
 ;; This package provides a minor mode that changes the terminal cursor
 ;; appearance based on Emacs cursor-type, blink-cursor-mode, and cursor face.
-;; Includes performance optimization and error handling.
+;; Includes performance optimization, error handling, and buffer-local state tracking.
 ;; 
 ;; Usage:
 ;;   (global-terminal-cursor-mode 1)  ; Enable for all buffers

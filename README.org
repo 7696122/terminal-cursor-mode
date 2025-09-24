@@ -1,6 +1,6 @@
 #+TITLE: Terminal Cursor Mode
 
-Emacs minor mode that changes cursor appearance in terminal based on cursor-type, with performance optimization and error handling.
+Emacs minor mode that changes cursor appearance in terminal based on cursor-type, with performance optimization, error handling, and buffer-local state tracking.
 
 * Features
 
@@ -8,6 +8,7 @@ Emacs minor mode that changes cursor appearance in terminal based on cursor-type
 - Controls cursor blinking with blink-cursor-mode
 - Sets cursor color from cursor face
 - Performance optimized (updates only when state changes)
+- Buffer-local state tracking (no cross-buffer interference)
 - Error handling for unsupported terminals
 - Global mode for all buffers
 

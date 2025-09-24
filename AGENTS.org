@@ -3,13 +3,14 @@
 * Terminal Cursor Mode Agent
 
 ** Description
-Emacs minor mode that changes cursor appearance in terminal based on cursor-type, blink-cursor-mode, and cursor face. Features performance optimization, error handling, and global mode support.
+Emacs minor mode that changes cursor appearance in terminal based on cursor-type, blink-cursor-mode, and cursor face. Features performance optimization, error handling, buffer-local state tracking, and global mode support.
 
 ** Features
 - Cursor shape control (box, bar, hbar)
 - Blink control with blink-cursor-mode
 - Color control from cursor face
 - Performance optimized updates
+- Buffer-local state tracking
 - Error handling for unsupported terminals
 - Global mode for all buffers
 

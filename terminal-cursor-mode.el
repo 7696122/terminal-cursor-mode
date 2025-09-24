@@ -6,15 +6,20 @@
   "Keymap for terminal-cursor-mode.")
 
 (defun terminal-cursor-update ()
-  "Update terminal cursor based on cursor-type and blink-cursor-mode."
+  "Update terminal cursor based on cursor-type, blink-cursor-mode, and cursor face."
   (when (not (display-graphic-p))
-    (let ((cursor-escape
-           (pcase cursor-type
-             ('box (if blink-cursor-mode "\e[1 q" "\e[2 q"))      ; Blinking/steady block
-             ('bar (if blink-cursor-mode "\e[5 q" "\e[6 q"))      ; Blinking/steady bar
-             ('hbar (if blink-cursor-mode "\e[3 q" "\e[4 q"))     ; Blinking/steady underline
-             (_ (if blink-cursor-mode "\e[1 q" "\e[2 q")))))      ; Default
-      (send-string-to-terminal cursor-escape))))
+    (let* ((cursor-escape
+            (pcase cursor-type
+              ('box (if blink-cursor-mode "\e[1 q" "\e[2 q"))      ; Blinking/steady block
+              ('bar (if blink-cursor-mode "\e[5 q" "\e[6 q"))      ; Blinking/steady bar
+              ('hbar (if blink-cursor-mode "\e[3 q" "\e[4 q"))     ; Blinking/steady underline
+              (_ (if blink-cursor-mode "\e[1 q" "\e[2 q"))))       ; Default
+           (cursor-color (face-attribute 'cursor :background nil 'default))
+           (color-escape (when (and cursor-color (not (eq cursor-color 'unspecified)))
+                          (format "\e]12;%s\007" cursor-color))))
+      (send-string-to-terminal cursor-escape)
+      (when color-escape
+        (send-string-to-terminal color-escape)))))
 
 (defun terminal-cursor-mode-enable ()
   "Enable terminal cursor mode."

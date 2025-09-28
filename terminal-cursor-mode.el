@@ -71,11 +71,13 @@
 (defun terminal-cursor-mode-enable ()
   "Enable terminal cursor mode."
   (add-hook 'post-command-hook #'terminal-cursor-update nil t)
+  (add-hook 'window-configuration-change-hook #'terminal-cursor-update nil t)
   (terminal-cursor-update))
 
 (defun terminal-cursor-mode-disable ()
   "Disable terminal cursor mode."
   (remove-hook 'post-command-hook #'terminal-cursor-update t)
+  (remove-hook 'window-configuration-change-hook #'terminal-cursor-update t)
   (setq terminal-cursor--last-state nil)
   ;; Reset cursor to a steady block
   (when (not (display-graphic-p))

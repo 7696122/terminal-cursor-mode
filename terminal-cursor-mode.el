@@ -41,6 +41,9 @@
 (defvar-local terminal-cursor--last-state nil
   "Last cursor state to avoid unnecessary updates.")
 
+(defvar-local terminal-cursor--error-reported nil
+  "Whether an error has been reported for the current buffer.")
+
 (defun terminal-cursor-update ()
   "Update terminal cursor based on cursor-type, blink-cursor-mode, and cursor face."
   (when (not (display-graphic-p))
@@ -48,7 +51,7 @@
            (current-state (list cursor-type blink-cursor-mode cursor-color)))
       (unless (equal current-state terminal-cursor--last-state)
         (setq terminal-cursor--last-state current-state)
-        (condition-case nil
+        (condition-case e
             (let* ((cursor-escape
                     (pcase cursor-type
                       ('box (if blink-cursor-mode "\e[1 q" "\e[2 q"))
@@ -60,7 +63,10 @@
               (send-string-to-terminal cursor-escape)
               (when color-escape
                 (send-string-to-terminal color-escape)))
-          (error nil))))))
+          (error
+           (unless terminal-cursor--error-reported
+             (setq terminal-cursor--error-reported t)
+             (message "Terminal-cursor-mode: Error sending escape sequence. Your terminal may not be fully supported. See TERMINAL-COMPATIBILITY.md"))))))))
 
 (defun terminal-cursor-mode-enable ()
   "Enable terminal cursor mode."
@@ -70,9 +76,23 @@
 (defun terminal-cursor-mode-disable ()
   "Disable terminal cursor mode."
   (remove-hook 'post-command-hook #'terminal-cursor-update t)
-  (setq terminal-cursor--last-state nil))
+  (setq terminal-cursor--last-state nil)
+  ;; Reset cursor to a steady block
+  (when (not (display-graphic-p))
+    (condition-case nil
+        (send-string-to-terminal "\e[2 q")
+      (error nil))))
 
 ;;;###autoload
+(defgroup terminal-cursor nil
+  "Settings for terminal-cursor-mode."
+  :group 'terminals)
+
+(defcustom terminal-cursor-mode-exclude-buffers '("\\`*eldoc\\*")
+  "List of regular expressions matching buffer names to exclude from terminal-cursor-mode."
+  :type '(repeat regexp)
+  :group 'terminal-cursor)
+
 (define-minor-mode terminal-cursor-mode
   "Minor mode to change cursor appearance in terminal based on cursor-type."
   :lighter " TCursor"
@@ -81,9 +101,19 @@
       (terminal-cursor-mode-enable)
     (terminal-cursor-mode-disable)))
 
+(defun terminal-cursor--buffer-excluded-p ()
+  "Check if the current buffer should be excluded."
+  (let ((name (buffer-name)))
+    (catch 'matched
+      (dolist (regexp terminal-cursor-mode-exclude-buffers)
+        (when (string-match-p regexp name)
+          (throw 'matched t)))
+      nil)))
+
 (defun terminal-cursor-mode-turn-on ()
   "Turn on terminal-cursor-mode if appropriate."
-  (unless (minibufferp)
+  (unless (or (minibufferp)
+              (terminal-cursor--buffer-excluded-p))
     (terminal-cursor-mode 1)))
 
 ;;;###autoload
